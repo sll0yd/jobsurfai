@@ -1,14 +1,26 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
   const pathname = usePathname()
+  const router = useRouter()
 
   const isActive = (path: string) => pathname === path
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      // Wait a brief moment to ensure the session is cleared
+      await new Promise(resolve => setTimeout(resolve, 100))
+      router.push('/')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -66,7 +78,7 @@ export default function Navbar() {
               <div className="relative group">
                 <button
                   className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
-                  onClick={() => signOut()}
+                  onClick={handleSignOut}
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white">
                     {user.email?.[0].toUpperCase()}
@@ -163,7 +175,7 @@ export default function Navbar() {
           </Link>
           {user ? (
             <button
-              onClick={() => signOut()}
+              onClick={handleSignOut}
               className="block w-full text-left px-3 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50"
             >
               Sign out
