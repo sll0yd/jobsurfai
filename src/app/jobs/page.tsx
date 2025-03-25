@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context'
 import { Job, JobStatus } from '@/lib/types'
 import { createClient } from '@/lib/supabase'
 import Link from 'next/link'
+import JobStatusComponent from '@/components/JobStatus'
 
 export default function Jobs() {
   const { user } = useAuth()
@@ -126,21 +127,7 @@ export default function Jobs() {
                       )}
                     </div>
                     <div className="flex items-center space-x-4">
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          job.status === 'applied'
-                            ? 'bg-green-100 text-green-800'
-                            : job.status === 'interview'
-                            ? 'bg-blue-100 text-blue-800'
-                            : job.status === 'offer'
-                            ? 'bg-purple-100 text-purple-800'
-                            : job.status === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {job.status}
-                      </span>
+                      <JobStatusComponent status={job.status} />
                       <span className="text-sm text-gray-500">
                         {new Date(job.created_at).toLocaleDateString()}
                       </span>

@@ -5,6 +5,8 @@ import { useAuth } from '@/lib/auth-context'
 import { Job, JobStatus } from '@/lib/types'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import JobStatusComponent from '@/components/JobStatus'
+import Link from 'next/link'
 
 export default function JobDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
@@ -258,17 +260,12 @@ export default function JobDetail({ params }: { params: Promise<{ id: string }> 
                   <div className="mt-2 flex space-x-2">
                     {(['saved', 'applied', 'interview', 'offer', 'rejected'] as JobStatus[]).map(
                       (status) => (
-                        <button
+                        <JobStatusComponent
                           key={status}
+                          status={status}
                           onClick={() => handleStatusChange(status)}
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            job.status === status
-                              ? 'bg-indigo-100 text-indigo-800'
-                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                          }`}
-                        >
-                          {status.charAt(0).toUpperCase() + status.slice(1)}
-                        </button>
+                          interactive
+                        />
                       )
                     )}
                   </div>
@@ -318,6 +315,29 @@ export default function JobDetail({ params }: { params: Promise<{ id: string }> 
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-8 flex justify-center">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <svg
+              className="h-4 w-4 mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Dashboard
+          </Link>
         </div>
       </div>
     </div>
