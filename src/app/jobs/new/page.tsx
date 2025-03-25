@@ -20,14 +20,29 @@ export default function NewJob() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
+    if (!user) {
+      setError('You must be logged in to create a job')
+      return
+    }
+
+    // Validate required fields
+    if (!formData.position || !formData.company) {
+      setError('Position and company are required fields')
+      return
+    }
 
     setLoading(true)
     setError(null)
     const supabase = createClient()
 
     try {
-      const { data, error } = await supabase
+      // Log the data being sent
+      console.log('Creating job with data:', {
+        ...formData,
+        user_id: user.id,
+      })
+
+      const { data, error: supabaseError } = await supabase
         .from('jobs')
         .insert({
           ...formData,
@@ -36,20 +51,36 @@ export default function NewJob() {
         .select()
         .single()
 
-      if (error) throw error
+      if (supabaseError) {
+        console.error('Supabase error:', supabaseError)
+        throw new Error(supabaseError.message || 'Failed to create job in database')
+      }
+
+      if (!data) {
+        throw new Error('No data returned from database')
+      }
 
       // Create activity record
-      await supabase.from('activities').insert({
+      const { error: activityError } = await supabase.from('activities').insert({
         job_id: data.id,
         user_id: user.id,
         type: 'created',
         details: 'New job application created',
       })
 
+      if (activityError) {
+        console.error('Activity creation error:', activityError)
+        // Don't throw here, as the job was created successfully
+      }
+
       router.push(`/jobs/${data.id}`)
     } catch (error) {
       console.error('Error creating job:', error)
-      setError('Failed to create job. Please try again.')
+      if (error instanceof Error) {
+        setError(`Failed to create job: ${error.message}`)
+      } else {
+        setError('Failed to create job. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

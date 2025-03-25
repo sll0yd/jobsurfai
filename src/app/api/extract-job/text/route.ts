@@ -6,6 +6,26 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+// Function to truncate text content
+function truncateText(text: string, maxLength: number = 8000): string {
+  // Remove extra whitespace
+  text = text.replace(/\s+/g, ' ').trim()
+
+  // If content is still too long, truncate it
+  if (text.length > maxLength) {
+    // Find the last complete sentence before maxLength
+    const truncated = text.substring(0, maxLength)
+    const lastPeriod = truncated.lastIndexOf('.')
+    const lastSpace = truncated.lastIndexOf(' ')
+    
+    // Cut at the last period or space, whichever is closer to maxLength
+    const cutPoint = lastPeriod > lastSpace ? lastPeriod + 1 : lastSpace
+    text = truncated.substring(0, cutPoint) + '...'
+  }
+
+  return text
+}
+
 export async function POST(request: Request) {
   try {
     const { text } = await request.json()
@@ -24,6 +44,9 @@ export async function POST(request: Request) {
       )
     }
 
+    // Truncate the text content
+    const truncatedText = truncateText(text)
+
     // Extract the main content using GPT
     let completion
     try {
@@ -40,7 +63,7 @@ export async function POST(request: Request) {
           },
           {
             role: "user",
-            content: text
+            content: truncatedText
           }
         ],
         response_format: { type: "json_object" },

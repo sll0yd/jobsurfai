@@ -6,6 +6,33 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+// Function to truncate HTML content while preserving structure
+function truncateHTML(html: string, maxLength: number = 8000): string {
+  // Remove script and style elements
+  html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+  html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+
+  // Remove comments
+  html = html.replace(/<!--[\s\S]*?-->/g, '')
+
+  // Remove extra whitespace
+  html = html.replace(/\s+/g, ' ').trim()
+
+  // If content is still too long, truncate it
+  if (html.length > maxLength) {
+    // Find the last complete sentence before maxLength
+    const truncated = html.substring(0, maxLength)
+    const lastPeriod = truncated.lastIndexOf('.')
+    const lastSpace = truncated.lastIndexOf(' ')
+    
+    // Cut at the last period or space, whichever is closer to maxLength
+    const cutPoint = lastPeriod > lastSpace ? lastPeriod + 1 : lastSpace
+    html = truncated.substring(0, cutPoint) + '...'
+  }
+
+  return html
+}
+
 export async function POST(request: Request) {
   try {
     const { url } = await request.json()
@@ -52,6 +79,9 @@ export async function POST(request: Request) {
       )
     }
 
+    // Truncate the HTML content
+    const truncatedHtml = truncateHTML(html)
+
     // Extract the main content using GPT
     let completion
     try {
@@ -68,7 +98,7 @@ export async function POST(request: Request) {
           },
           {
             role: "user",
-            content: html
+            content: truncatedHtml
           }
         ],
         response_format: { type: "json_object" },
