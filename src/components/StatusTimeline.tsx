@@ -2,6 +2,7 @@
 
 import { JobStatus } from '@/lib/types'
 import { format } from 'date-fns'
+import { colors } from '@/lib/design-system'
 
 interface StatusTimelineProps {
   currentStatus: JobStatus
@@ -18,32 +19,37 @@ interface StatusTimelineProps {
 const statusConfig = {
   saved: {
     label: 'Saved',
-    color: 'bg-gray-100 text-gray-800',
-    hoverColor: 'hover:bg-gray-200',
+    color: colors.gray[100],
+    textColor: colors.gray[800],
+    hoverColor: colors.gray[200],
     icon: '📑',
   },
   applied: {
     label: 'Applied',
-    color: 'bg-green-100 text-green-800',
-    hoverColor: 'hover:bg-green-200',
+    color: colors.success[100],
+    textColor: colors.success[800],
+    hoverColor: colors.success[200],
     icon: '📤',
   },
   interview: {
     label: 'Interview',
-    color: 'bg-blue-100 text-blue-800',
-    hoverColor: 'hover:bg-blue-200',
+    color: colors.secondary[100],
+    textColor: colors.secondary[800],
+    hoverColor: colors.secondary[200],
     icon: '👥',
   },
   offer: {
     label: 'Offer',
-    color: 'bg-purple-100 text-purple-800',
-    hoverColor: 'hover:bg-purple-200',
+    color: colors.primary[100],
+    textColor: colors.primary[800],
+    hoverColor: colors.primary[200],
     icon: '💼',
   },
   rejected: {
     label: 'Rejected',
-    color: 'bg-red-100 text-red-800',
-    hoverColor: 'hover:bg-red-200',
+    color: colors.error[100],
+    textColor: colors.error[800],
+    hoverColor: colors.error[200],
     icon: '❌',
   },
 }
@@ -61,7 +67,7 @@ export default function StatusTimeline({
       {/* Progress Bar */}
       <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200">
         <div
-          className="h-full bg-indigo-600 transition-all duration-300"
+          className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-in-out"
           style={{
             width: `${(statusOrder.indexOf(currentStatus) / (statusOrder.length - 1)) * 100}%`,
           }}
@@ -79,22 +85,24 @@ export default function StatusTimeline({
             <div key={status} className="flex flex-col items-center">
               <button
                 onClick={() => onStatusChange(status)}
-                className={`group relative flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 cursor-pointer ${
-                  isActive ? config.color : 'bg-white border-2 border-gray-300'
-                } ${config.hoverColor} focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                className={`group relative flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? `bg-[${config.color}] text-[${config.textColor}] shadow-md`
+                    : 'bg-white border-2 border-gray-300'
+                } hover:bg-[${config.hoverColor}] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
                 title={`Change status to ${config.label}`}
               >
-                <span className="text-lg transform transition-transform duration-200 group-hover:scale-110">
+                <span className="text-xl transform transition-transform duration-300 group-hover:scale-110">
                   {config.icon}
                 </span>
                 {isActive && (
-                  <span className="absolute -inset-1 rounded-full bg-indigo-100 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  <span className="absolute -inset-1 rounded-full bg-indigo-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 )}
               </button>
-              <div className="mt-2 text-center">
+              <div className="mt-3 text-center">
                 <div className="text-sm font-medium text-gray-900">{config.label}</div>
                 {date && (
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 mt-1">
                     {format(new Date(date), 'MMM d, yyyy')}
                   </div>
                 )}
