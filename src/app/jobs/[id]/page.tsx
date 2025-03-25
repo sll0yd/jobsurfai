@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { Job, JobStatus } from '@/lib/types'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
-export default function JobDetail({ params }: { params: { id: string } }) {
+export default function JobDetail({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
   const { user } = useAuth()
   const router = useRouter()
   const [job, setJob] = useState<Job | null>(null)
@@ -22,7 +23,7 @@ export default function JobDetail({ params }: { params: { id: string } }) {
       const { data, error } = await supabase
         .from('jobs')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', resolvedParams.id)
         .single()
 
       if (error) {
@@ -37,7 +38,7 @@ export default function JobDetail({ params }: { params: { id: string } }) {
     }
 
     fetchJob()
-  }, [user, params.id, router])
+  }, [user, resolvedParams.id, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

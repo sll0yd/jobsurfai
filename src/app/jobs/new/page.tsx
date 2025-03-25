@@ -121,7 +121,8 @@ export default function NewJob() {
         // Don't throw here, as the job was created successfully
       }
 
-      router.push(`/jobs/${data.id}`)
+      // Redirect to dashboard instead of job detail page
+      router.push('/dashboard')
     } catch (error) {
       console.error('Error creating job:', error)
       if (error instanceof Error) {
