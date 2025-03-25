@@ -1,4 +1,4 @@
-import { JobStatus } from '@/lib/types'
+import type { JobStatus } from '@/lib/types'
 import {
   BookmarkIcon,
   CheckCircleIcon,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { createSupabaseClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
 import { Job } from '@/lib/types'
 
@@ -53,7 +53,7 @@ export default function JobForm({ isOpen, onClose, onJobAdded }: JobFormProps) {
 
     setIsSubmitting(true)
     try {
-      const supabase = createSupabaseClient()
+      const supabase = createClient()
       const { data, error } = await supabase
         .from('jobs')
         .insert([

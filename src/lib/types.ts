@@ -13,6 +13,7 @@ export interface Job {
   status: JobStatus
   created_at: string
   updated_at: string
+  saved_date?: string
   applied_date?: string
   interview_date?: string
   offer_date?: string
@@ -21,6 +22,8 @@ export interface Job {
   contact_name?: string
   contact_email?: string
   contact_phone?: string
+  type?: string
+  experience_level?: string
 }
 
 export interface Activity {

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
-import { createClient } from '@/lib/supabase/server'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -47,7 +46,7 @@ export async function POST(request: Request) {
     // Validate URL format
     try {
       new URL(url)
-    } catch (e) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid URL format' },
         { status: 400 }
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
           { status: response.status }
         )
       }
-    } catch (e) {
+    } catch {
       return NextResponse.json(
         { error: 'Failed to fetch URL. The website might be blocking automated requests.' },
         { status: 500 }

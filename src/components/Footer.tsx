@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { gradients, colors } from '@/lib/design-system'
 
 export default function Footer() {
   return (

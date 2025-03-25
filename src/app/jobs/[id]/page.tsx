@@ -77,7 +77,7 @@ export default function JobDetail({ params }: { params: Promise<{ id: string }> 
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Job not found</h1>
-          <p className="mt-2 text-gray-500">The job you're looking for doesn't exist or you don't have access to it.</p>
+          <p className="mt-2 text-gray-500">The job you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.</p>
           <button
             onClick={() => router.push('/dashboard')}
             className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"

@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { gradients, shadows, transitions } from '@/lib/design-system'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()

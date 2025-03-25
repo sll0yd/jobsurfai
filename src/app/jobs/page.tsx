@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { createClient } from '@/lib/supabase'
-import { Job } from '@/lib/types'
+import { Job, JobStatus } from '@/lib/types'
 import StatusFilter from '@/components/StatusFilter'
 
 export default function JobsList() {
@@ -12,7 +12,7 @@ export default function JobsList() {
   const { user } = useAuth()
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+  const [selectedStatus, setSelectedStatus] = useState<JobStatus | 'all'>('all')
 
   useEffect(() => {
     if (!user) {
@@ -41,9 +41,7 @@ export default function JobsList() {
     fetchJobs()
   }, [user, router])
 
-  const filteredJobs = selectedStatus
-    ? jobs.filter((job) => job.status === selectedStatus)
-    : jobs
+  const filteredJobs = selectedStatus === 'all' ? jobs : jobs.filter((job) => job.status === selectedStatus)
 
   const statusCounts = jobs.reduce((acc, job) => {
     acc[job.status] = (acc[job.status] || 0) + 1
@@ -84,7 +82,7 @@ export default function JobsList() {
         <div className="divide-y divide-gray-200">
           {filteredJobs.length === 0 ? (
             <div className="px-6 py-4 text-gray-500">
-              No jobs found. {selectedStatus ? 'Try selecting a different status.' : 'Add your first job to get started!'}
+              No jobs found. {selectedStatus === 'all' ? 'Try selecting a status.' : 'Add your first job to get started!'}
             </div>
           ) : (
             filteredJobs.map((job) => (
