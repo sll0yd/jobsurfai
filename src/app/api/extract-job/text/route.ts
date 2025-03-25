@@ -27,6 +27,10 @@ export async function POST(request: Request) {
     // Extract the main content using GPT
     let completion
     try {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OpenAI API key is not configured')
+      }
+
       completion = await openai.chat.completions.create({
         model: "gpt-4-turbo-preview",
         messages: [
@@ -44,8 +48,14 @@ export async function POST(request: Request) {
       })
     } catch (e) {
       console.error('OpenAI API error:', e)
+      if (e instanceof Error) {
+        return NextResponse.json(
+          { error: `Failed to process job posting with AI: ${e.message}` },
+          { status: 500 }
+        )
+      }
       return NextResponse.json(
-        { error: 'Failed to process job posting with AI. Please try again or enter details manually.' },
+        { error: 'Failed to process job posting with AI. Please check your OpenAI API key and try again.' },
         { status: 500 }
       )
     }
@@ -64,7 +74,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error extracting job details:', error)
     return NextResponse.json(
-      { error: 'An unexpected error occurred while processing the job posting.' },
+      { error: error instanceof Error ? error.message : 'An unexpected error occurred while processing the job posting.' },
       { status: 500 }
     )
   }
