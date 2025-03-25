@@ -31,29 +31,77 @@ export default function NewJob() {
       return
     }
 
+    // Validate status
+    if (!formData.status || !['saved', 'applied', 'interview', 'offer', 'rejected'].includes(formData.status)) {
+      setError('Invalid job status')
+      return
+    }
+
     setLoading(true)
     setError(null)
-    const supabase = createClient()
 
     try {
-      // Log the data being sent
-      console.log('Creating job with data:', {
-        ...formData,
-        user_id: user.id,
+      // Log user information
+      console.log('User:', {
+        id: user.id,
+        email: user.email,
+        role: user.role
       })
 
+      // Create Supabase client
+      const supabase = createClient()
+
+      // Verify authentication
+      const { data: { session }, error: authError } = await supabase.auth.getSession()
+      if (authError || !session) {
+        console.error('Authentication error:', authError)
+        throw new Error('Authentication failed. Please try logging in again.')
+      }
+
+      // Prepare the data to be sent
+      const jobData = {
+        ...formData,
+        user_id: user.id,
+        position: formData.position.trim(),
+        company: formData.company.trim(),
+        location: formData.location?.trim(),
+        description: formData.description?.trim(),
+        requirements: formData.requirements?.trim(),
+        salary_range: formData.salary_range?.trim(),
+        job_url: formData.job_url?.trim(),
+        notes: formData.notes?.trim(),
+      }
+
+      // Log the data being sent
+      console.log('Creating job with data:', jobData)
+
+      // Attempt to insert the job
       const { data, error: supabaseError } = await supabase
         .from('jobs')
-        .insert({
-          ...formData,
-          user_id: user.id,
-        })
+        .insert(jobData)
         .select()
         .single()
 
       if (supabaseError) {
-        console.error('Supabase error:', supabaseError)
-        throw new Error(supabaseError.message || 'Failed to create job in database')
+        console.error('Supabase error details:', {
+          code: supabaseError.code,
+          message: supabaseError.message,
+          details: supabaseError.details,
+          hint: supabaseError.hint
+        })
+
+        // Check for specific error types
+        if (supabaseError.code === '23505') {
+          throw new Error('A job with this position and company already exists')
+        } else if (supabaseError.code === '23514') {
+          throw new Error('Invalid job status')
+        } else if (supabaseError.code === '42P01') {
+          throw new Error('Database table not found')
+        } else if (supabaseError.code === '42501') {
+          throw new Error('Permission denied. Please check your database permissions.')
+        } else {
+          throw new Error(supabaseError.message || 'Failed to create job in database')
+        }
       }
 
       if (!data) {
