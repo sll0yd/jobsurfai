@@ -1,21 +1,28 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { user, signOut } = useAuth()
-  const pathname = usePathname()
   const router = useRouter()
 
-  const isActive = (path: string) => pathname === path
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleSignOut = async () => {
     try {
       await signOut()
-      // Wait a brief moment to ensure the session is cleared
-      await new Promise(resolve => setTimeout(resolve, 100))
       router.push('/')
     } catch (error) {
       console.error('Error signing out:', error)
@@ -23,170 +30,150 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-white/95 backdrop-blur-sm shadow-md' 
+        : 'bg-white/80 backdrop-blur-sm'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          {/* Logo */}
+          {/* Logo and brand */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <span className="text-white text-xl font-bold">J</span>
-              </div>
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                JobSurfAI
+            <Link href="/" className="flex items-center">
+              <span className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                Job Surf AI
               </span>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop navigation */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
-            <Link
-              href="/dashboard"
-              className={`text-sm font-medium transition-colors duration-200 ${
-                isActive('/dashboard')
-                  ? 'text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Dashboard
+            <Link href="#features" className="text-gray-600 hover:text-gray-900">
+              Features
             </Link>
-            <Link
-              href="/jobs"
-              className={`text-sm font-medium transition-colors duration-200 ${
-                isActive('/jobs')
-                  ? 'text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Jobs
+            <Link href="#testimonials" className="text-gray-600 hover:text-gray-900">
+              Testimonials
             </Link>
-            <Link
-              href="/jobs/new"
-              className={`text-sm font-medium transition-colors duration-200 ${
-                isActive('/jobs/new')
-                  ? 'text-indigo-600'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              New Job
+            <Link href="#faq" className="text-gray-600 hover:text-gray-900">
+              FAQ
             </Link>
-          </div>
-
-          {/* User Menu */}
-          <div className="hidden sm:flex sm:items-center">
             {user ? (
-              <div className="relative group">
-                <button
-                  className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none"
-                  onClick={handleSignOut}
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/dashboard"
+                  className="text-gray-600 hover:text-gray-900"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white">
-                    {user.email?.[0].toUpperCase()}
-                  </div>
-                  <span>Sign out</span>
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  Sign out
                 </button>
               </div>
             ) : (
-              <Link
-                href="/auth"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
-              >
-                Sign in
-              </Link>
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/auth"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/auth?mode=signup"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Sign up
+                </Link>
+              </div>
             )}
           </div>
 
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
             <button
-              type="button"
+              onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-              aria-controls="mobile-menu"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
-              <svg
-                className="block h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-              <svg
-                className="hidden h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              {!isOpen ? (
+                <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              ) : (
+                <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <div className="sm:hidden hidden" id="mobile-menu">
+      <div className={`sm:hidden ${isOpen ? 'block' : 'hidden'} ${
+        isScrolled ? 'bg-white/95 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm'
+      }`}>
         <div className="pt-2 pb-3 space-y-1">
           <Link
-            href="/dashboard"
-            className={`block px-3 py-2 text-base font-medium ${
-              isActive('/dashboard')
-                ? 'text-indigo-600 bg-indigo-50'
-                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            href="#features"
+            className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            onClick={() => setIsOpen(false)}
           >
-            Dashboard
+            Features
           </Link>
           <Link
-            href="/jobs"
-            className={`block px-3 py-2 text-base font-medium ${
-              isActive('/jobs')
-                ? 'text-indigo-600 bg-indigo-50'
-                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            href="#testimonials"
+            className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            onClick={() => setIsOpen(false)}
           >
-            Jobs
+            Testimonials
           </Link>
           <Link
-            href="/jobs/new"
-            className={`block px-3 py-2 text-base font-medium ${
-              isActive('/jobs/new')
-                ? 'text-indigo-600 bg-indigo-50'
-                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            href="#faq"
+            className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            onClick={() => setIsOpen(false)}
           >
-            New Job
+            FAQ
           </Link>
           {user ? (
-            <button
-              onClick={handleSignOut}
-              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-            >
-              Sign out
-            </button>
+            <>
+              <Link
+                href="/dashboard"
+                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setIsOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  handleSignOut()
+                  setIsOpen(false)
+                }}
+                className="block w-full text-left px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              >
+                Sign out
+              </button>
+            </>
           ) : (
-            <Link
-              href="/auth"
-              className="block px-3 py-2 text-base font-medium text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50"
-            >
-              Sign in
-            </Link>
+            <>
+              <Link
+                href="/auth"
+                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setIsOpen(false)}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/auth?mode=signup"
+                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign up
+              </Link>
+            </>
           )}
         </div>
       </div>

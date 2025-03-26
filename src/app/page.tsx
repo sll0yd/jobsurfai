@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-export default function LandingPage() {
+export default function Home() {
   const { user } = useAuth()
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
@@ -27,98 +27,47 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm z-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">J</span>
-                </div>
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                  JobSurfAI
-                </span>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="#features"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Features
-              </Link>
-              <Link
-                href="#testimonials"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Testimonials
-              </Link>
-              <Link
-                href="#faq"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                FAQ
-              </Link>
-              <Link
-                href="/signin"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
-              >
-                Sign Up
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50 to-white pt-16">
-        <div className="absolute inset-0">
-          <svg className="absolute bottom-0 w-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path
-              fill="currentColor"
-              fillOpacity="0.1"
-              d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            ></path>
-          </svg>
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50 to-white pt-28 pb-24">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-8">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">J</span>
-              </div>
-              <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                JobSurfAI
+            <div className="flex items-center justify-center mb-8">
+              <span className="text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight">
+                Job Surf AI
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Ride the wave to your next job
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-16 max-w-2xl mx-auto">
               Streamline your job search with AI-powered insights and automated tracking. 
               Let us help you navigate the job market with confidence.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
-              >
-                Get Started
-              </Link>
-              <Link
-                href="#features"
-                className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
-              >
-                Learn More
-              </Link>
-            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0">
+          <svg className="absolute bottom-0 w-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path
+              fill="#4F46E5"
+              fillOpacity="0.1"
+              d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            ></path>
+          </svg>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/auth"
+              className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+            >
+              Get Started
+            </Link>
+            <Link
+              href="#features"
+              className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
+            >
+              Learn More
+            </Link>
           </div>
         </div>
       </section>
@@ -226,7 +175,7 @@ export default function LandingPage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-600">&ldquo;JobSurfAI has completely transformed how I manage my job search. The AI-powered insights are incredibly helpful!&rdquo;</p>
+              <p className="text-gray-600">&ldquo;Job Surf AI has completely transformed how I manage my job search. The AI-powered insights are incredibly helpful!&rdquo;</p>
             </div>
 
             {/* Testimonial 2 */}
@@ -237,7 +186,7 @@ export default function LandingPage() {
                 </div>
                 <div className="ml-4">
                   <h4 className="text-lg font-semibold text-gray-900">Alice Smith</h4>
-                  <p className="text-gray-600">&ldquo;The timeline management feature is a game-changer. It helps me stay organized and never miss important deadlines.&rdquo;</p>
+                  <p className="text-gray-600">Product Manager</p>
                 </div>
               </div>
               <div className="flex mb-4">
@@ -247,7 +196,7 @@ export default function LandingPage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-600">&ldquo;The analytics dashboard gives me great insights into my job search progress. Highly recommended!&rdquo;</p>
+              <p className="text-gray-600">&ldquo;The timeline management feature is a game-changer. It helps me stay organized and never miss important deadlines.&rdquo;</p>
             </div>
 
             {/* Testimonial 3 */}
@@ -279,7 +228,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-xl text-gray-600">Everything you need to know about JobSurfAI</p>
+            <p className="text-xl text-gray-600">Everything you need to know about Job Surf AI</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
@@ -307,7 +256,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-8">Ready to ride the wave?</h2>
           <Link
-            href="/signup"
+            href="/auth"
             className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 transition-colors duration-200"
           >
             Get Started Now
