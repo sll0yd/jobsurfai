@@ -14,6 +14,8 @@ export default function NewJob() {
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState<Partial<Job>>({
     status: 'saved',
+    contact_name: '',
+    contact_email: '',
   })
   const [jobUrl, setJobUrl] = useState('')
   const [jobText, setJobText] = useState('')
@@ -70,6 +72,8 @@ export default function NewJob() {
         salary_range: formData.salary_range?.trim(),
         job_url: formData.job_url?.trim(),
         notes: formData.notes?.trim(),
+        contact_name: formData.contact_name?.trim(),
+        contact_email: formData.contact_email?.trim(),
       }
 
       // Log the data being sent
@@ -234,7 +238,7 @@ export default function NewJob() {
                     <input
                       type="url"
                       id="job-url"
-                      className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                       placeholder="Paste job posting URL"
                       value={jobUrl}
                       onChange={(e) => setJobUrl(e.target.value)}
@@ -243,7 +247,7 @@ export default function NewJob() {
                       type="button"
                       onClick={handleExtractFromUrl}
                       disabled={extracting || !jobUrl}
-                      className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                      className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                     >
                       {extracting ? 'Extracting...' : 'Extract Details'}
                     </button>
@@ -258,7 +262,7 @@ export default function NewJob() {
                     <textarea
                       id="job-text"
                       rows={4}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                       placeholder="Paste job description text"
                       value={jobText}
                       onChange={(e) => setJobText(e.target.value)}
@@ -268,7 +272,7 @@ export default function NewJob() {
                         type="button"
                         onClick={handleExtractFromText}
                         disabled={extracting || !jobText}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                       >
                         {extracting ? 'Extracting...' : 'Extract Details'}
                       </button>
@@ -278,49 +282,133 @@ export default function NewJob() {
               </div>
             </div>
 
-            {/* Manual Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="position" className="block text-sm font-medium text-gray-700">
-                  Position
-                </label>
-                <input
-                  type="text"
-                  id="position"
-                  required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  value={formData.position || ''}
-                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                />
+            <form onSubmit={handleSubmit}>
+              {/* Job Details Section */}
+              <div className="mb-8">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Job Details</h2>
+                <div className="grid grid-cols-1 gap-6">
+                  <div>
+                    <label htmlFor="position" className="block text-sm font-medium text-gray-700">
+                      Position *
+                    </label>
+                    <input
+                      type="text"
+                      id="position"
+                      required
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.position || ''}
+                      onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-700">
+                      Company *
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      required
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.company || ''}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      id="location"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.location || ''}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+                      Type
+                    </label>
+                    <select
+                      id="type"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.type || ''}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                    >
+                      <option value="">Select type</option>
+                      <option value="full-time">Full Time</option>
+                      <option value="part-time">Part Time</option>
+                      <option value="contract">Contract</option>
+                      <option value="internship">Internship</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="experience-level" className="block text-sm font-medium text-gray-700">
+                      Experience Level
+                    </label>
+                    <select
+                      id="experience-level"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.experience_level || ''}
+                      onChange={(e) => setFormData({ ...formData, experience_level: e.target.value })}
+                    >
+                      <option value="">Select level</option>
+                      <option value="entry">Entry Level</option>
+                      <option value="mid">Mid Level</option>
+                      <option value="senior">Senior Level</option>
+                      <option value="lead">Lead</option>
+                      <option value="manager">Manager</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="salary-range" className="block text-sm font-medium text-gray-700">
+                      Salary Range
+                    </label>
+                    <input
+                      type="text"
+                      id="salary-range"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.salary_range || ''}
+                      onChange={(e) => setFormData({ ...formData, salary_range: e.target.value })}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label htmlFor="company" className="block text-sm font-medium text-gray-700">
-                  Company
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  value={formData.company || ''}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                />
+              {/* Contact Information Section */}
+              <div className="mb-8">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Contact Information</h2>
+                <div className="grid grid-cols-1 gap-6">
+                  <div>
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700">
+                      Contact Name
+                    </label>
+                    <input
+                      type="text"
+                      id="contact-name"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.contact_name || ''}
+                      onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                      placeholder="e.g., John Smith"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700">
+                      Contact Email
+                    </label>
+                    <input
+                      type="email"
+                      id="contact-email"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      value={formData.contact_email || ''}
+                      onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                      placeholder="e.g., john.smith@company.com"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                  Location
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  value={formData.location || ''}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                />
-              </div>
-
+              {/* Additional Information Section */}
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                   Description
@@ -328,7 +416,7 @@ export default function NewJob() {
                 <textarea
                   id="description"
                   rows={4}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   value={formData.description || ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
@@ -341,22 +429,9 @@ export default function NewJob() {
                 <textarea
                   id="requirements"
                   rows={4}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   value={formData.requirements || ''}
                   onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="salary_range" className="block text-sm font-medium text-gray-700">
-                  Salary Range
-                </label>
-                <input
-                  type="text"
-                  id="salary_range"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  value={formData.salary_range || ''}
-                  onChange={(e) => setFormData({ ...formData, salary_range: e.target.value })}
                 />
               </div>
 
@@ -367,7 +442,7 @@ export default function NewJob() {
                 <input
                   type="url"
                   id="job_url"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   value={formData.job_url || ''}
                   onChange={(e) => setFormData({ ...formData, job_url: e.target.value })}
                 />
@@ -380,17 +455,17 @@ export default function NewJob() {
                 <textarea
                   id="notes"
                   rows={4}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   value={formData.notes || ''}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 />
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-8">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                 >
                   {loading ? 'Creating...' : 'Create Job'}
                 </button>

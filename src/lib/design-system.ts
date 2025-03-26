@@ -32,4 +32,32 @@ export const colors = {
 } as const
 
 export type ColorKey = keyof typeof colors
-export type ColorShade = keyof typeof colors[ColorKey] 
+export type ColorShade = keyof typeof colors[ColorKey]
+
+export const statusColors = {
+  saved: {
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    hover: 'hover:bg-blue-200',
+  },
+  applied: {
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    hover: 'hover:bg-blue-200',
+  },
+  interview: {
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    hover: 'hover:bg-blue-200',
+  },
+  offer: {
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    hover: 'hover:bg-blue-200',
+  },
+  rejected: {
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    hover: 'hover:bg-blue-200',
+  },
+} 
