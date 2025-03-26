@@ -4,18 +4,8 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-
-interface Job {
-  id: string
-  title: string
-  company: string
-  status: 'saved' | 'applied' | 'interview' | 'offer' | 'rejected'
-  date: string
-  location: string
-  type: string
-  experience_level: string
-  salary_range: string
-}
+import { createClient } from '@/lib/supabase'
+import { Job } from '@/lib/types'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -32,68 +22,26 @@ export default function Dashboard() {
       return
     }
 
-    // Simulated job data
-    const mockJobs: Job[] = [
-      {
-        id: '1',
-        title: 'Senior Frontend Developer',
-        company: 'Tech Corp',
-        status: 'applied',
-        date: '2024-03-15',
-        location: 'San Francisco, CA',
-        type: 'Full-time',
-        experience_level: 'Senior',
-        salary_range: '$120k - $160k',
-      },
-      {
-        id: '2',
-        title: 'Full Stack Engineer',
-        company: 'StartupX',
-        status: 'interview',
-        date: '2024-03-14',
-        location: 'Remote',
-        type: 'Full-time',
-        experience_level: 'Mid-level',
-        salary_range: '$90k - $120k',
-      },
-      {
-        id: '3',
-        title: 'UI/UX Designer',
-        company: 'Design Studio',
-        status: 'saved',
-        date: '2024-03-13',
-        location: 'New York, NY',
-        type: 'Full-time',
-        experience_level: 'Senior',
-        salary_range: '$100k - $140k',
-      },
-      {
-        id: '4',
-        title: 'Backend Developer',
-        company: 'Cloud Systems',
-        status: 'offer',
-        date: '2024-03-12',
-        location: 'Seattle, WA',
-        type: 'Full-time',
-        experience_level: 'Senior',
-        salary_range: '$130k - $170k',
-      },
-      {
-        id: '5',
-        title: 'DevOps Engineer',
-        company: 'InfraTech',
-        status: 'rejected',
-        date: '2024-03-11',
-        location: 'Remote',
-        type: 'Full-time',
-        experience_level: 'Mid-level',
-        salary_range: '$110k - $150k',
-      },
-    ]
+    const fetchJobs = async () => {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from('jobs')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
 
-    setJobs(mockJobs)
-    setFilteredJobs(mockJobs)
-    setLoading(false)
+        if (error) throw error
+        setJobs(data || [])
+        setFilteredJobs(data || [])
+      } catch (error) {
+        console.error('Error fetching jobs:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchJobs()
   }, [user, router])
 
   useEffect(() => {
@@ -104,7 +52,7 @@ export default function Dashboard() {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(
         job => 
-          job.title.toLowerCase().includes(query) ||
+          job.position.toLowerCase().includes(query) ||
           job.company.toLowerCase().includes(query) ||
           job.location.toLowerCase().includes(query)
       )
@@ -248,7 +196,7 @@ export default function Dashboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
                       <p className="text-sm font-medium text-indigo-600 truncate group-hover:text-indigo-500">
-                        {job.title}
+                        {job.position}
                       </p>
                       <span className="text-sm text-gray-500">•</span>
                       <span className="text-sm text-gray-500">{job.company}</span>
@@ -271,7 +219,7 @@ export default function Dashboard() {
                     >
                       {getStatusText(job.status)}
                     </span>
-                    <span className="text-sm text-gray-500">{job.date}</span>
+                    <span className="text-sm text-gray-500">{new Date(job.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>
